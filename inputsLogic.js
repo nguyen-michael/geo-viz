@@ -1,12 +1,11 @@
 const submitButton = document.querySelector("#submit");
 const inputs = document.querySelectorAll("input");
 
-
 // Saves to local so P5 can pick it up (? can it? )
 function handleSubmit(e) {
-    console.log("You cliked!", createGeometryData());
+    let data = createGeometryData();
+    window.localStorage.setItem("geometryData", JSON.stringify(data));
 }
-
 
 // inefficiently saving things that don't change! Whatever, it's small. we'll fix it.
 
@@ -20,7 +19,5 @@ function createGeometryData() {
 
     return data;
 }
-
-
 
 submitButton.addEventListener("click", handleSubmit);
