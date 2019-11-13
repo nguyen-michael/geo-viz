@@ -7,18 +7,21 @@ function setup() {
   let myCanvas = createCanvas(700, 500);
   myCanvas.parent('drawContainer');
   colorMode(HSB, 100);
-  frameRate(1);
 }
 
 function draw() {
+  background(123, 20, 100);
   const data = getGeometryData();
+  stroke(210);
+  text(data.one.offset, mouseX, mouseY);
 
 }
 
 // Getting data from the localStorage
 function getGeometryData() {
   let data = getItem("geometryData");
-  return JSON.parse(data);
+  data = JSON.parse(data);
+  return data;
 }
 
 // Draws a bike
