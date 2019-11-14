@@ -10,19 +10,31 @@ function setup() {
 }
 
 function draw() {
-  background(123, 20, 100);
-  const data = getGeometryData();
-  stroke(210);
-  text(data.one.offset, mouseX, mouseY);
-
+  background(23, 20, 100);
 }
 
 // Getting data from the localStorage
 function getGeometryData() {
   let data = getItem("geometryData");
   data = JSON.parse(data);
+  console.log(data);
   return data;
 }
 
-// Draws a bike
-function drawBike() {};
+// Draws a bike, takes object in format:
+/*
+{ 
+bottomBracketDrop: "0",
+chainStayLength: "0",
+effectiveTopTube: "0",
+headAngle: "0",
+offset: "0",
+seatAngle: "0",
+wheelRadius: "0",
+wheelbase: "0"
+}
+*/
+function drawBike(geo) {
+  
+};
+
