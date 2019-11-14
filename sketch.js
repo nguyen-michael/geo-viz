@@ -1,7 +1,5 @@
-function preload() {
-  // Preload can be used to load in media before the rest of
-  // the program runs.
-}
+// Scalar for changing the scale of the drawing in 1/x. (to shrink the bike)
+let drawScale = 2;
 
 function setup() {
   let myCanvas = createCanvas(700, 500);
@@ -10,7 +8,7 @@ function setup() {
 }
 
 function draw() {
-  background(23, 20, 100);
+  background(50, 20, 100);
 }
 
 // Getting data from the localStorage
