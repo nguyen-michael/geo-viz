@@ -7,6 +7,7 @@ function setup() {
   let myCanvas = createCanvas(700, 500);
   myCanvas.parent('drawContainer');
   colorMode(HSB);
+  angleMode(DEGREES);
 }
 
 function draw() {
@@ -46,7 +47,7 @@ function drawBike(geo, color) {
     }
   }
 
-  // Testing: Drawing some points:
+  // Drawing of Bicycle:
 
   // Rear Wheel Axle
   let rearWheelAxle = createVector(drawBuffer + geo.wheelRadius, height - drawBuffer - geo.wheelRadius);
@@ -60,21 +61,31 @@ function drawBike(geo, color) {
   point(frontWheelAxle);
 
   // Wheels
+  push();
   strokeWeight(3);
   // turn vector into array and get x and y then spread into method...
-  circle(...rearWheelAxle.array().slice(0, 2), geo.wheelRadius * 2);
-  circle(...frontWheelAxle.array().slice(0, 2), geo.wheelRadius * 2);
+  circle(rearWheelAxle.x, rearWheelAxle.y, geo.wheelRadius * 2);
+  circle(frontWheelAxle.x, frontWheelAxle.y, geo.wheelRadius * 2);
+  pop();
 
   // Bottom Bracket
   let bottomBracket = rearWheelAxle.copy().add(Math.sqrt(Math.pow(geo.chainStayLength, 2) - Math.pow(geo.bottomBracketDrop, 2)), geo.bottomBracketDrop);
-  strokeWeight(10);
   point(bottomBracket);
 
   // Chainstay
+  push();
   strokeWeight(3);
-  line(...bottomBracket.array().slice(0, 2), ...rearWheelAxle.array().slice(0, 2));
+  line(bottomBracket.x, bottomBracket.y, rearWheelAxle.x, rearWheelAxle.y);
 
   // Seat Angle and Seat Tube
+  let seatTube = createVector(0, -1).setMag(geo.seatTube).rotate((90 - geo.seatAngle) * -1);
+  seatTube.add(bottomBracket);
+  line(seatTube.x, seatTube.y, bottomBracket.x, bottomBracket.y);
+
+  // Effective Top Tube
+  let effectiveTopTube = p5.Vector.add(seatTube, createVector(geo.effectiveTopTube, 0, 0));
+  line(seatTube.x, seatTube.y, effectiveTopTube.x, effectiveTopTube.y);
+  pop();
 
 };
 
