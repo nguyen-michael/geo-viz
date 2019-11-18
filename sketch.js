@@ -1,5 +1,5 @@
 // Scalar for changing the scale of the drawing. (to shrink the bike)
-let drawScale = 0.37;
+let drawScale = 0.42;
 // Pixels from the edge we want the wheel to be
 let drawBuffer = 10;
 
@@ -35,7 +35,8 @@ offset: "0",
 seatAngle: "0",
 wheelRadius: "0",
 wheelbase: "0",
-seatTube: "0"
+seatTube: "0",
+headTube: "0"
 }
 */
 function drawBike(geo, color) {
@@ -85,7 +86,14 @@ function drawBike(geo, color) {
   // Effective Top Tube
   let effectiveTopTube = p5.Vector.add(seatTube, createVector(geo.effectiveTopTube, 0, 0));
   line(seatTube.x, seatTube.y, effectiveTopTube.x, effectiveTopTube.y);
-  pop();
+  
+  // Head Tube
+  // x and y of ETT is also top of headtube
+  // headTube here is bottom of headtube.
+  let headTube = createVector(0, 1).setMag(geo.headTube).rotate((90 - geo.headAngle) * -1);
+  headTube.add(effectiveTopTube);
+  line(effectiveTopTube.x, effectiveTopTube.y, headTube.x, headTube.y);
 
+  pop();
 };
 
