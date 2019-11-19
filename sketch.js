@@ -1,5 +1,5 @@
 // Scalar for changing the scale of the drawing. (to shrink the bike)
-let drawScale = 0.42;
+let drawScale = 0.40;
 // Pixels from the edge we want the wheel to be
 let drawBuffer = 10;
 
@@ -36,7 +36,9 @@ seatAngle: "0",
 wheelRadius: "0",
 wheelbase: "0",
 seatTube: "0",
-headTube: "0"
+headTube: "0",
+stack: "0",
+reach: "0"
 }
 */
 function drawBike(geo, color) {
@@ -67,33 +69,67 @@ function drawBike(geo, color) {
   // turn vector into array and get x and y then spread into method...
   circle(rearWheelAxle.x, rearWheelAxle.y, geo.wheelRadius * 2);
   circle(frontWheelAxle.x, frontWheelAxle.y, geo.wheelRadius * 2);
-  pop();
 
   // Bottom Bracket
   let bottomBracket = rearWheelAxle.copy().add(Math.sqrt(Math.pow(geo.chainStayLength, 2) - Math.pow(geo.bottomBracketDrop, 2)), geo.bottomBracketDrop);
   point(bottomBracket);
 
   // Chainstay
-  push();
-  strokeWeight(3);
   line(bottomBracket.x, bottomBracket.y, rearWheelAxle.x, rearWheelAxle.y);
 
+  // Stack and Reach lines + Effective Top Tube
+  push();
+  strokeWeight(1);
+  let stack = createVector(0, -1).setMag(geo.stack);
+  let reach = createVector(1, 0).setMag(geo.reach);
+  stack.add(bottomBracket);
+  reach.add(stack);
+  // stack line:
+  line(stack.x, stack.y, bottomBracket.x, bottomBracket.y);
+  // Reach line:
+  // This will be covered by the ETT.
+  line(stack.x, stack.y, reach.x, reach.y);
+
+  // Effective Top Tube
+  // This original Logic is wrong, the ETT  should not extend from the top of the seat tube.
+  // let effectiveTopTube = p5.Vector.add(seatTube, createVector(geo.effectiveTopTube, 0, 0));
+  // line(seatTube.x, seatTube.y, effectiveTopTube.x, effectiveTopTube.y);
+
+  let effectiveTopTube = createVector(-1, 0).setMag(geo.effectiveTopTube);
+  effectiveTopTube.add(reach);
+  line(effectiveTopTube.x, effectiveTopTube.y, reach.x, reach.y);
+  pop();
+
+  // Head Tube
+  // Original logic here is based on false assumption of where ETT goes.
+  // let headTube = createVector(0, 1).setMag(geo.headTube).rotate((90 - geo.headAngle) * -1);
+  // headTube.add(effectiveTopTube);
+  // line(effectiveTopTube.x, effectiveTopTube.y, headTube.x, headTube.y);
+  // New Logic: Top of headtube is Stack + Reach from the bottom bracket.
+  // From our coding, it is the endpoint of the reach vector
+  // Headtube vector will still lead to bottom of headtube
+  let headTube = createVector(0, 1).setMag(geo.headTube).rotate((90 - geo.headAngle) * -1);
+  headTube.add(reach);
+  line(reach.x, reach.y, headTube.x, headTube.y);
+
+  // Other Tubes
   // Seat Angle and Seat Tube
   let seatTube = createVector(0, -1).setMag(geo.seatTube).rotate((90 - geo.seatAngle) * -1);
   seatTube.add(bottomBracket);
   line(seatTube.x, seatTube.y, bottomBracket.x, bottomBracket.y);
 
-  // Effective Top Tube
-  let effectiveTopTube = p5.Vector.add(seatTube, createVector(geo.effectiveTopTube, 0, 0));
-  line(seatTube.x, seatTube.y, effectiveTopTube.x, effectiveTopTube.y);
-  
-  // Head Tube
-  // x and y of ETT is also top of headtube
-  // headTube here is bottom of headtube.
-  let headTube = createVector(0, 1).setMag(geo.headTube).rotate((90 - geo.headAngle) * -1);
-  headTube.add(effectiveTopTube);
-  line(effectiveTopTube.x, effectiveTopTube.y, headTube.x, headTube.y);
+  // Top Tube
+  // aka "ineffective top tube" huehuehue
+  line(seatTube.x, seatTube.y, reach.x, reach.y);
 
+  // Down Tube
+  line(bottomBracket.x, bottomBracket.y, headTube.x, headTube.y);
+
+  // Seat Stay
+  line(rearWheelAxle.x, rearWheelAxle.y, seatTube.x, seatTube.y);
+
+  // (Simulated) Fork
+  line(headTube.x, headTube.y, frontWheelAxle.x, frontWheelAxle.y);
   pop();
 };
 
